@@ -1,0 +1,8 @@
+---
+
+dependencies:
+
+  - role: mariadb
+    vars:
+      mariadb_databases: []
+      mariadb_users: []

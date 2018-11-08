@@ -1,0 +1,15 @@
+---
+
+###
+# GALERA
+###
+
+# Configuration
+galera_wsrep_cluster_name: galera
+galera_wsrep_node_address: "{{ hostvars[inventory_hostname].ip }}"
+galera_wsrep_node_name: "{{ inventory_hostname }}"
+
+# Galera maintainer
+galera_sysadmin:
+  name: debian-sys-maint
+  password: galera10

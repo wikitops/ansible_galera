@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+
+[mysqld]
+#
+# * Galera Features
+#
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address={{ galera_wsrep_node_address }}
+
+# Galera Provider Configuration
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Galera Cluster Configuration
+wsrep_cluster_name="{{ galera_wsrep_cluster_name }}"
+wsrep_cluster_address="gcomm://{% for host in groups['galera'] %}{{ hostvars[host].ip }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+# Galera Synchronization Configuration
+wsrep_sst_method=rsync
+
+# Galera Node Configuration
+wsrep_node_address="{{ galera_wsrep_node_address }}"
+wsrep_node_name="{{ galera_wsrep_node_name }}"

@@ -1,0 +1,34 @@
+---
+
+- name: GALERA | Configuration
+  template:
+    src: etc/mysql/conf.d/galera.cnf.j2
+    dest: /etc/mysql/conf.d/galera.cnf
+    owner: root
+    group: root
+    mode: 0644
+  register: galera_config
+
+- name: GALERA | Manage sysadmin user
+  mysql_user:
+    name: "{{ galera_sysadmin.name }}"
+    password: "{{ galera_sysadmin.password }}"
+    priv: "*.*:ALL,GRANT"
+    state: "present"
+
+- name: GALERA | Ensure MariaDB is stopped
+  systemd:
+    name: mariadb
+    state: stopped
+  when: galera_config.changed
+
+- name: GALERA | Setup the cluster
+  run_once: yes
+  shell: galera_new_cluster
+  when: galera_config.changed
+
+- name: GALERA | Joining nodes to cluster
+  systemd:
+    name: mariadb
+    state: restarted
+  when: galera_config.changed
